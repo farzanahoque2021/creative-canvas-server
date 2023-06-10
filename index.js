@@ -31,7 +31,7 @@ async function run() {
         const classCollection = client.db("creativeDb").collection("class");
 
         app.get('/popularclass', async (req, res) => {
-            const result = await classCollection.find().toArray();
+            const result = await classCollection.find({ status: "approved" }).sort({ studentNumber: -1 }).limit(6).toArray();
             res.send(result);
         })
         // Send a ping to confirm a successful connection
