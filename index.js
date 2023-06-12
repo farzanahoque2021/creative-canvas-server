@@ -31,6 +31,7 @@ async function run() {
         const classCollection = client.db("creativeDb").collection("class");
         const instructorCollection = client.db("creativeDb").collection("instructors")
         const cartCollection = client.db("creativeDb").collection("carts")
+        const usersCollection = client.db("creativeDb").collection("users")
 
         app.get('/popularclass', async (req, res) => {
             const result = await classCollection.find({ status: "approved" }).sort({ studentNumber: -1 }).limit(6).toArray();
@@ -72,6 +73,12 @@ async function run() {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await cartCollection.deleteOne(query);
+            res.send(result)
+        })
+
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
             res.send(result)
         })
         // Send a ping to confirm a successful connection
