@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const port = process.env.PORT || 5000;
 
@@ -32,6 +33,13 @@ async function run() {
         const instructorCollection = client.db("creativeDb").collection("instructors")
         const cartCollection = client.db("creativeDb").collection("carts")
         const usersCollection = client.db("creativeDb").collection("users")
+
+        app.post('/jwt', (req, res) => {
+            const user = req.body;
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+
+            res.send({ token })
+        })
 
         app.get('/popularclass', async (req, res) => {
             const result = await classCollection.find({ status: "approved" }).sort({ studentNumber: -1 }).limit(6).toArray();
