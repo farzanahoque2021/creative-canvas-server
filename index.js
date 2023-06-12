@@ -6,10 +6,8 @@ require('dotenv').config()
 const port = process.env.PORT || 5000;
 
 // middleware
-
 app.use(cors());
 app.use(express.json());
-
 
 const verifyJWT = (req, res, next) => {
     const authorization = req.headers.authorization;
@@ -46,7 +44,6 @@ async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
-
 
         const classCollection = client.db("creativeDb").collection("class");
         const instructorCollection = client.db("creativeDb").collection("instructors")
@@ -135,6 +132,30 @@ async function run() {
                 }
             }
             const result = await usersCollection.updateOne(filter, updateDoc)
+            res.send(result)
+        })
+
+        app.get('/users/admin/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+
+            if (req.decoded.email !== email) {
+                res.send({ admin: false })
+            }
+            const query = { email: email }
+            const user = await usersCollection.findOne(query)
+            const result = { admin: user?.role === 'admin' }
+            res.send(result)
+        })
+
+        app.get('/users/instructor/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+
+            if (req.decoded.email !== email) {
+                res.send({ instructor: false })
+            }
+            const query = { email: email }
+            const user = await usersCollection.findOne(query)
+            const result = { instructor: user?.role === 'instructor' }
             res.send(result)
         })
 
