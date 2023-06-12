@@ -108,6 +108,17 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/addedclass', verifyJWT, async (req, res) => {
+            const email = req.query.email;
+            if (!email) {
+                res.send([]);
+            }
+
+            const query = { instructorEmail: email }
+            const result = await classCollection.find(query).toArray();
+            res.send(result)
+        })
+
         app.delete('/carts/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
@@ -202,6 +213,12 @@ async function run() {
                 }
             }
             const result = await usersCollection.updateOne(filter, updateDoc)
+            res.send(result)
+        })
+
+        app.post('/classes', async (req, res) => {
+            const newClass = req.body;
+            const result = await classCollection.insertOne(newClass)
             res.send(result)
         })
 
