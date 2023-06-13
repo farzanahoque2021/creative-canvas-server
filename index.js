@@ -83,7 +83,7 @@ async function run() {
         })
 
         app.get('/classes', async (req, res) => {
-            const result = await classCollection.find().toArray();
+            const result = await classCollection.find({ status: "approved" }).toArray();
             res.send(result)
         })
 
@@ -116,6 +116,13 @@ async function run() {
 
             const query = { instructorEmail: email }
             const result = await classCollection.find(query).toArray();
+            res.send(result)
+        })
+
+        app.get('/carts/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await cartCollection.findOne(query);
             res.send(result)
         })
 
@@ -221,6 +228,8 @@ async function run() {
             const result = await classCollection.insertOne(newClass)
             res.send(result)
         })
+
+
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
