@@ -81,8 +81,13 @@ async function run() {
             const result = await instructorCollection.find().toArray();
             res.send(result);
         })
-
+        // this api is for manage classes
         app.get('/classes', async (req, res) => {
+            const result = await classCollection.find().toArray();
+            res.send(result)
+        })
+
+        app.get('/approvedclasses', async (req, res) => {
             const result = await classCollection.find({ status: "approved" }).toArray();
             res.send(result)
         })
@@ -184,6 +189,19 @@ async function run() {
                 }
             }
             const result = await classCollection.updateOne(filter, updateDoc)
+            res.send(result)
+        })
+
+        app.put('/feedback/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) }
+            const updateDoc = req.body;
+            const updateFeedback = {
+                $set: {
+                    feedback: updateDoc.feedback
+                }
+            }
+            const result = await classCollection.updateOne(filter, updateFeedback)
             res.send(result)
         })
 
