@@ -284,6 +284,14 @@ async function run() {
             res.send({ insertResult, deleteResult, seatResult, studentResult });
         })
 
+        app.get('/paymenthistory', verifyJWT, async (req, res) => {
+            const email = req.query.email;
+
+            const query = { email: email }
+            const result = await paymentCollection.find(query).sort({ date: -1 }).toArray();
+            res.send(result)
+        })
+
 
 
         // Send a ping to confirm a successful connection
